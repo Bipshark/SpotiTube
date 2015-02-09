@@ -14,7 +14,7 @@ var gulp = require('gulp')
 , 	glob = require('glob')
 , 	livereload = require('gulp-livereload')
 , 	jasminePhantomJs = require('gulp-jasmine2-phantomjs')
-, 	webserver = require('gulp-webserver');
+, 	webserver = require('./server/main.js');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
@@ -64,44 +64,44 @@ var browserifyTask = function (options) {
 			cache: {}, packageCache: {}, fullPaths: true
 		});
 
-	testBundler.external(dependencies);
+		testBundler.external(dependencies);
 
-	var rebundleTests = function () {
-		var start = Date.now();
-		console.log('Building TEST bundle');
-		testBundler.bundle()
+		var rebundleTests = function () {
+			var start = Date.now();
+			console.log('Building TEST bundle');
+			testBundler.bundle()
+			.on('error', gutil.log)
+			.pipe(source('specs.js'))
+			.pipe(gulp.dest(options.dest))
+			.pipe(livereload())
+			.pipe(notify(function () {
+				console.log('TEST bundle built in ' + (Date.now() - start) + 'ms');
+			}));
+		};
+
+		testBundler = watchify(testBundler);
+		testBundler.on('update', rebundleTests);
+		rebundleTests();
+
+		if (!options.development) {
+			dependencies.splice(dependencies.indexOf('react-addons'), 1);
+		}
+
+		var vendorsBundler = browserify({
+			debug: true,
+			require: dependencies
+		});
+
+		var start = new Date();
+		console.log('Building VENDORS bundle');
+		vendorsBundler.bundle()
 		.on('error', gutil.log)
-		.pipe(source('specs.js'))
+		.pipe(source('vendors.js'))
+		.pipe(gulpif(!options.development, streamify(uglify())))
 		.pipe(gulp.dest(options.dest))
-		.pipe(livereload())
 		.pipe(notify(function () {
-        	console.log('TEST bundle built in ' + (Date.now() - start) + 'ms');
+			console.log('VENDORS bundle built in ' + (Date.now() - start) + 'ms');
 		}));
-	};
-
-	testBundler = watchify(testBundler);
-	testBundler.on('update', rebundleTests);
-	rebundleTests();
-
-	if (!options.development) {
-		dependencies.splice(dependencies.indexOf('react-addons'), 1);
-	}
-
-	var vendorsBundler = browserify({
-		debug: true,
-		require: dependencies
-	});
-
-	var start = new Date();
-	console.log('Building VENDORS bundle');
-	vendorsBundler.bundle()
-	.on('error', gutil.log)
-	.pipe(source('vendors.js'))
-	.pipe(gulpif(!options.development, streamify(uglify())))
-	.pipe(gulp.dest(options.dest))
-	.pipe(notify(function () {
-		console.log('VENDORS bundle built in ' + (Date.now() - start) + 'ms');
-	}));
 	}
 }
 
@@ -128,46 +128,53 @@ var cssTask = function (options) {
 	}
 }
 
-gulp.task('webserver', function() {
-	gulp.src('./build/')
-		.pipe(webserver({
-			livereload: true,
-			open: true
-		}));
+// Starts our development workflow
+gulp.task('default', function () {
+	browserifyTask({
+		development: true,
+		src: './app/main.js',
+		dest: './build'
+	});
+
+	cssTask({
+		development: true,
+		src: './styles/**/*.css',
+		dest: './build'
+	});
+
+	webserver.start({
+		livereload: true,
+		hostname: "localhost",
+		port: 4567,
+		directory: "./build"
+	});
 });
 
-// Starts our development workflow
-gulp.task('default', ['webserver'], function () {
-
-  browserifyTask({
-    development: true,
-    src: './app/main.js',
-    dest: './build'
-  });
-
-  cssTask({
-    development: true,
-    src: './styles/**/*.css',
-    dest: './build'
-  });
+gulp.task('webserver', ['deploy'], function() {
+	webserver.start({
+		livereload: false,
+		hostname: "localhost",
+		port: 4567,
+		directory: "./dist"
+	});
 });
 
 gulp.task('deploy', function () {
 
-  browserifyTask({
-    development: false,
-    src: './app/main.js',
-    dest: './dist'
-  });
+	browserifyTask({
+		development: false,
+		src: './app/main.js',
+		dest: './dist'
+	});
 
-  cssTask({
-    development: false,
-    src: './styles/**/*.css',
-    dest: './dist'
-  });
+	cssTask({
+		development: false,
+		src: './styles/**/*.css',
+		dest: './dist'
+	});
 
 });
 
 gulp.task('test', function () {
-    return gulp.src('./build/testrunner-phantomjs.html').pipe(jasminePhantomJs());
+	return gulp.src('./build/testrunner-phantomjs.html').pipe(jasminePhantomJs());
 });
