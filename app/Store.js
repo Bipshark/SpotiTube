@@ -11,7 +11,7 @@ module.exports = flux.createStore({
 
         $.get("/backend/search", { "query": query }, function(result) {
             console.log("result", result);
-            this.results.push(result);
+            this.results = JSON.parse(result);
             this.emitChange();
         }.bind(this));
     },

@@ -25,7 +25,7 @@ var App = React.createClass({
     },
     renderResults: function (result) {
         return (
-            <div>{result}</div>
+            <a href={result}>{result}</a>
         );
     },
     search: function(event) {
