@@ -1,20 +1,20 @@
-var gulp = require('gulp')
-, 	source = require('vinyl-source-stream')
-, 	browserify = require('browserify')
-, 	watchify = require('watchify')
-, 	reactify = require('reactify')
-, 	gulpif = require('gulp-if')
-, 	uglify = require('gulp-uglify')
-, 	streamify = require('gulp-streamify')
-, 	notify = require('gulp-notify')
-, 	concat = require('gulp-concat')
-, 	cssmin = require('gulp-cssmin')
-, 	gutil = require('gulp-util')
-, 	shell = require('gulp-shell')
-, 	glob = require('glob')
-, 	livereload = require('gulp-livereload')
-, 	jasminePhantomJs = require('gulp-jasmine2-phantomjs')
-, 	webserver = require('./server/main.js');
+var gulp = require('gulp'),
+	source = require('vinyl-source-stream'),
+	browserify = require('browserify'),
+	watchify = require('watchify'),
+	reactify = require('reactify'),
+	gulpif = require('gulp-if'),
+	uglify = require('gulp-uglify'),
+	streamify = require('gulp-streamify'),
+	notify = require('gulp-notify'),
+	concat = require('gulp-concat'),
+	cssmin = require('gulp-cssmin'),
+	gutil = require('gulp-util'),
+	shell = require('gulp-shell'),
+	glob = require('glob'),
+	livereload = require('gulp-livereload'),
+	jasminePhantomJs = require('gulp-jasmine2-phantomjs'),
+	webserver = require('./server/main.js');
 
 // External dependencies you do not want to rebundle while developing,
 // but include in your application deployment
