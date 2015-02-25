@@ -1,47 +1,59 @@
 /** @jsx React.DOM */
-var React = require('react');
-var Store = require('./Store.js');
-var actions = require('./actions.js');
+var React = require("react");
+var ReactAddons = require("react-addons");
+
+var SearchResult = React.createClass({
+    render: function() {
+        if (this.props.data.url) {
+            return <div className="result">{this.props.data.title} <a href={this.props.data.url}>{this.props.data.url}</a></div>;
+        } else {
+            return <div className="result">{this.props.data.title}</div>;
+        }
+    }
+});
 
 var App = React.createClass({
-    getInitialState: function () {
+    mixins: [ReactAddons.LinkedStateMixin],
+    getInitialState: function() {
         return {
-            results: Store.getResults()
+            query: "",
+            results: []
         };
     },
     componentDidMount: function() {
         document.title = "SpotiTube";
     },
-    componentWillMount: function () {
-        Store.addChangeListener(this.changeState);
-    },
-    componentWillUnmount: function () {
-        Store.removeChangeListener(this.changeState);
-    },
-    changeState: function () {
-        this.setState({
-          results: Store.getResults()
-        });
-    },
-    renderResults: function (result) {
-        return (
-            <a href={result}>{result}</a>
-        );
-    },
-    search: function(event) {
-        event.preventDefault();
-        var input = this.refs.URIs.getDOMNode();
-        actions.search(input.value);
-        console.log("Searching for", input.value);
+    search: function(e) {
+        e.preventDefault();
+
+        $.getJSON("/backend/search", { query: this.state.query }, function(data) {
+            if (data.error) {
+                console.log(data.error);
+
+                return;
+            }
+
+            if (data.results) {
+                this.setState( { results: data.results });
+            }
+
+        }.bind(this));
     },
     render: function() {
         return (
             <div>
+                <a href="./">
+                    <img src="img/header.jpg" alt="" />
+                </a>
                 <form onSubmit={this.search}>
-                    <textarea ref="URIs" />
-                    <input type="submit" />
+                    <textarea ref="URIs" valueLink={this.linkState("query")} id="content" />
+                    <input type="submit" value="Search" />
                 </form>
-                {this.state.results.map(this.renderResults)}
+                <div id="results">
+                    {this.state.results.map(function(result, index) {
+                        return <SearchResult key={index} data={result} />
+                    })}
+                </div>
             </div>
         );
     }

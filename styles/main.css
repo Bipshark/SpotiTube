@@ -1,3 +1,53 @@
 body {
-	background-color: #EAEAEA;
+    font: 14px/1.5em sans-serif;
+    padding: 32px;
+    width: 800px;
+    text-align: center;
+    margin: 0 auto;
+    color: #333;
+}
+
+input, button, textarea {
+    font: 14px/1.5em sans-serif;
+    margin: 4px;
+}
+
+#spotifyURI {
+    width: 12em;
+}
+
+.result {
+    text-align: left;
+    padding: 8px;
+}
+
+.result:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.result a {
+    color: #333;
+    float: right;
+    background: url(img/player-icon.png) no-repeat right center;
+    padding-right: 40px;
+}
+
+.result a:hover {
+    color: #E32B26;
+}
+
+#content {
+    box-sizing: border-box;
+    width: 100%;
+    height: 12em;
+}
+
+#screenshot {
+    margin-top: 1em;
+    opacity: 0.2;
+    border-radius: 8px;
+}
+
+#screenshot:hover {
+    opacity: 1;
 }

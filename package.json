@@ -27,9 +27,8 @@
     "watchify": "^2.1.1"
   },
   "dependencies": {
-    "async": "^0.9.0",
+    "bluebird": "^2.9.12",
     "express": "^4.11.2",
-    "flux-react": "^2.6.0",
     "react": "^0.12.0"
   }
 }

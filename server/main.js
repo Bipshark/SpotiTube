@@ -39,12 +39,30 @@ var youtubeSearch = function(query, callback) {
         });
         res.on('end', function() {
             data = JSON.parse(data);
-            callback(null, data.items[0].id.videoId);
+
+            if (data.error)
+                console.log(data.error.errors);
+
+            if (data.items) {
+
+                if (data.items[0]) {
+                    callback(null, { title: data.items[0].snippet.title, url: "http://youtu.be/" + data.items[0].id.videoId });
+                } else {
+                    callback(null, { title: query });
+                }
+            } else {
+                callback("Something went wrong when searching YouTube...");
+            }
         });
     });
 };
 
 var start = function(options) {
+    Promise = require("bluebird");
+
+    var sSearch = Promise.promisify(spotifySearch);
+    var ySearch = Promise.promisify(youtubeSearch);
+
     if (options.livereload) {
         app.use(require('connect-livereload')({
           port: 35729
@@ -52,21 +70,24 @@ var start = function(options) {
     }
 
     app.use(express.static(options.directory));
+    app.use("/img", express.static("./img"));
 
     app.get('/backend/:function', function(req, res) {
-        console.log("function", req.params.function);
-        console.log("query", req.query);
+        if (req.query.query) {
+            var uris = req.query.query.split("\n");
 
-        async.waterfall([
-            function(callback) {
-                spotifySearch(req.query.query, callback);
-            },
-            function(result, callback) {
-                youtubeSearch(result, callback);
-            }
-        ], function (err, result) {
-            res.send(JSON.stringify(["http://youtu.be/" + result]));
-        });
+            Promise.map(uris, function(uri) {
+                return sSearch(uri).then(ySearch).then(function(result) {
+                    return result;
+                });
+            }).then(function(results) {
+                res.send(JSON.stringify({ results: results }));
+            }, function(err) {
+                res.send(JSON.stringify({ error: err.message }));
+            });
+        } else {
+            res.send(JSON.stringify({ error: "No query" }));
+        }
     });
 
     app.listen(options.port, options.hostname);
