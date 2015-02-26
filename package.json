@@ -4,6 +4,10 @@
   "description": "React application boilerplate",
   "author": "Christian Alfoni",
   "license": "ISC",
+  "scripts": {
+    "prestart": "node node_modules/gulp/bin/gulp deploy",
+    "start": "node app.js"
+  },
   "devDependencies": {
     "connect-livereload": "^0.5.2",
     "phantomjs": "^1.9.12"

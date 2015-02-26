@@ -57,6 +57,12 @@ var youtubeSearch = function(query, callback) {
 };
 
 var start = function(options) {
+
+    options.livereload = options.livereload || false;
+    options.hostname = options.hostname || "0.0.0.0";
+    options.port = options.port || 5000;
+    options.directory = options.directory || "./dist";
+
     Promise = require("bluebird");
 
     var sSearch = Promise.promisify(spotifySearch);
