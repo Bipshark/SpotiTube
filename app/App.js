@@ -16,7 +16,7 @@ var App = React.createClass({
     mixins: [ReactAddons.LinkedStateMixin],
     getInitialState: function() {
         return {
-            query: "",
+            query: "http://open.spotify.com/track/1AJoyUDeUcKaBnlWTpvldd\nhttp://open.spotify.com/track/08wt9mzTb0VWrTVhs0YsE3\nhttp://open.spotify.com/track/0jkRzVO8X68Nnc6cEojjxT",
             results: []
         };
     },

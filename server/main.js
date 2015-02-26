@@ -73,17 +73,22 @@ var start = function(options) {
 
     app.get('/backend/:function', function(req, res) {
         if (req.query.query) {
-            var uris = req.query.query.split("\n");
+            if (youtubeKey) {
+                var uris = req.query.query.split("\n");
 
-            Promise.map(uris, function(uri) {
-                return sSearch(uri).then(ySearch).then(function(result) {
-                    return result;
+                Promise.map(uris, function(uri) {
+                    return sSearch(uri).then(ySearch).then(function(result) {
+                        return result;
+                    });
+                }).then(function(results) {
+                    res.send(JSON.stringify({ results: results }));
+                }, function(err) {
+                    res.send(JSON.stringify({ error: err.message }));
                 });
-            }).then(function(results) {
-                res.send(JSON.stringify({ results: results }));
-            }, function(err) {
-                res.send(JSON.stringify({ error: err.message }));
-            });
+            } else {
+                console.log("No YouTube API-key specified.");
+                res.send(JSON.stringify({ error: "Invalid configuration" }));
+            }
         } else {
             res.send(JSON.stringify({ error: "No query" }));
         }
