@@ -1,6 +1,5 @@
 var express = require('express'),
     app = express(),
-    async = require('async'),
     http = require('http'),
     https = require('https');
 

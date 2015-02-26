@@ -5,6 +5,13 @@
   "author": "Christian Alfoni",
   "license": "ISC",
   "devDependencies": {
+    "connect-livereload": "^0.5.2",
+    "phantomjs": "^1.9.12"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.12",
+    "express": "^4.11.2",
+    "react": "^0.12.0",
     "browserify": "^6.2.0",
     "connect-livereload": "^0.5.2",
     "glob": "^4.0.6",
@@ -20,15 +27,9 @@
     "gulp-uglify": "^0.3.1",
     "gulp-util": "^3.0.0",
     "gulp-webserver": "^0.9.0",
-    "phantomjs": "^1.9.12",
     "react-addons": "^0.9.0",
     "reactify": "^0.15.2",
     "vinyl-source-stream": "^0.1.1",
     "watchify": "^2.1.1"
-  },
-  "dependencies": {
-    "bluebird": "^2.9.12",
-    "express": "^4.11.2",
-    "react": "^0.12.0"
   }
 }
