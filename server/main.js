@@ -6,7 +6,7 @@ var express = require('express'),
 var youtubeKey = process.env.YOUTUBE_KEY;
 
 var spotifySearch = function(query, callback) {
-    var results = /(spotify:track:|http:\/\/open\.spotify\.com\/track\/)([\w]{22})/g.exec(query);
+    var results = /(spotify:track:|https?:\/\/open\.spotify\.com\/track\/)([\w]{22})/g.exec(query);
 
     if (results !== null && results[2]) {
         trackURI = results[2];
@@ -45,7 +45,7 @@ var youtubeSearch = function(query, callback) {
             if (data.items) {
 
                 if (data.items[0]) {
-                    callback(null, { title: data.items[0].snippet.title, url: "http://youtu.be/" + data.items[0].id.videoId });
+                    callback(null, { title: data.items[0].snippet.title, url: "https://youtu.be/" + data.items[0].id.videoId });
                 } else {
                     callback(null, { title: query });
                 }
